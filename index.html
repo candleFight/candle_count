@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/themes/odometer-theme-default.min.css">
+
+    <title>윤석열 대통령 탄핵소추안 즉각 발의 요청에 관한 청원</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body, html {
+            height: 100%;
+        }
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+        }
+        h1 {
+            font-family: "Noto Sans KR", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 700;
+            font-style: normal;
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+        .subheader {
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 700;
+            font-size: 25px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: red;
+            color: white;
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 5px;
+        }
+        #count {
+            font-size: 100px;
+            color: #007bff;
+        }
+        .progress {
+            height: 30px;
+            margin: 10px 0;
+            position: relative;
+            background-color: #e9ecef;
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background-color: #007bff;
+            transition: width 0.6s ease;
+            height: 100%;
+        }
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .button-group {
+            margin-top: 20px;
+        }
+        .info-text {
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 400;
+            font-size: 18px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+
+  <script src ="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"></script>
+  
+  <div class="container">
+    <main>
+      <h1>윤석열 대통령 탄핵소추안<br>즉각 발의 요청에 관한 청원</h1>
+      <div class="subheader">실시간 동의 수</div>
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <h1 id="count">0</h1>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-8">
+          <div class="progress">
+            <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            </div>
+            <span id="progress-text" class="progress-text">0%</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-text"><b>매주 토요일 6시, 서울 시청역 7번 출구</b>에서는<br>윤석열 퇴진, 김건희 특검 촛불집회가 진행됩니다.</div>
+      <div class="button-group">
+        <a href="https://cafe.naver.com/junhwanmove" id="naver-cafe-link" class="btn btn-danger btn-lg" role="button" target=_blank>네이버 카페</a>
+        <a href="http://pf.kakao.com/_hdVxlxj" id="kakao-channel-link" class="btn btn-warning btn-lg" role="button" target=_blank>카톡 채널</a>
+        <a href="https://www.youtube.com/@candlemove" id="youtube-channel-link" class="btn btn-info btn-lg" role="button" target=_blank>유튜브 채널</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const url = 'http://nas.gobongs.com:50000/petition_count';
+    const maxCount = 50000;
+
+    var countOdometer = new Odometer({
+        el: document.querySelector('#count'),
+        format: 'ddd,ddd',
+        theme: 'default'
+    });
+
+    const fetchCount = async function() {
+        try {
+            const response = await fetch(url);
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            console.log('Fetched data:', data);
+            if (data.count !== undefined) {
+                const count = data.count;
+                document.querySelector('#count').innerHTML = count.toLocaleString();
+                countOdometer.update(count);
+
+                const percentage = (count / maxCount) * 100;
+                document.querySelector('#progress-bar').style.width = percentage + '%';
+                document.querySelector('#progress-bar').setAttribute('aria-valuenow', percentage);
+                document.querySelector('#progress-text').innerHTML = percentage.toFixed(2) + '% (' + count.toLocaleString() + ' / ' + maxCount.toLocaleString() + ')';
+            } else {
+                document.querySelector('#count').innerHTML = "데이터를 찾을 수 없습니다.";
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            document.querySelector('#count').innerHTML = "데이터를 가져오는 중 오류 발생";
+        }
+    }
+
+    fetchCount();
+    setInterval(fetchCount, 3000);  // 3초마다 갱신
+  </script>
+</body>
+</html>
